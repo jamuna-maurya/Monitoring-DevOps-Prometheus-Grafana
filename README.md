@@ -111,6 +111,72 @@ Move
 sudo mv prometheus-3.5.0.linux-amd64 /opt/prometheus
 ```
 
+Create Prometheus user
+
+```bash
+sudo useradd --no-create-home --shell /bin/false prometheus
+```
+
+Change ownership
+```
+sudo chown -R prometheus:prometheus /opt/prometheus
+```
+
+Create Prometheus Service
+```
+sudo nano /etc/systemd/system/prometheus.service
+```
+Paste
+```
+[Unit]
+Description=Prometheus Monitoring
+After=network.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+
+ExecStart=/opt/prometheus/prometheus \
+--config.file=/opt/prometheus/prometheus.yml \
+--storage.tsdb.path=/opt/prometheus/data
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+save
+
+
+Create data directory
+```
+sudo mkdir /opt/prometheus/data
+```
+Ownership
+```
+sudo chown -R prometheus:prometheus /opt/prometheus/data
+```
+Reload
+```
+sudo systemctl daemon-reload
+```
+Enable
+```
+sudo systemctl enable prometheus
+```
+Start
+```
+sudo systemctl start prometheus
+```
+Check
+```
+sudo systemctl status prometheus
+```
+Open browser
+```
+http://YOUR_PUBLIC_IP:9090
+```
 ---
 
 ## Step 3
